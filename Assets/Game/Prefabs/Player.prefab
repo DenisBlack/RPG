@@ -127,10 +127,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2649956996143856464, guid: 27d0264e081d87b409cb8c9bc1f8dbbc, type: 3}
       propertyPath: _timeBetweenAttacks
-      value: 1.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8954156348070176283, guid: 27d0264e081d87b409cb8c9bc1f8dbbc, type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8954156348070176283, guid: 27d0264e081d87b409cb8c9bc1f8dbbc, type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
