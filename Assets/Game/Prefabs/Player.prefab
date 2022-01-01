@@ -147,6 +147,10 @@ PrefabInstance:
       propertyPath: _timeBetweenAttacks
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8009510134396064397, guid: 27d0264e081d87b409cb8c9bc1f8dbbc, type: 3}
+      propertyPath: uniqueIdentifier
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 8954156348070176283, guid: 27d0264e081d87b409cb8c9bc1f8dbbc, type: 3}
       propertyPath: m_Name
       value: Player
