@@ -1,18 +1,30 @@
 ﻿using System;
 using RPG.Core;
 using RPG.Movement;
+using RPG.Saving;
 using UnityEngine;
 
 namespace RPG.Combat
 {
-    public class Fighter : MonoBehaviour, IAction
+    public class Fighter : MonoBehaviour, IAction, ISaveable
     {
-        [SerializeField] private float _attackRange = 2f;
         [SerializeField] private float _timeBetweenAttacks = 1f;
-        [SerializeField] private float _weaponDamage = 5f;
-        
+        [SerializeField] private Transform _rightHandTransform = null;
+        [SerializeField] private Transform _leftHandTransform = null;
+        [SerializeField] private Weapon _defaultWeapon = null;
+      
         private Health _target;
         private float _timeSinceLastAttack = Mathf.Infinity;
+        private Weapon _currentWeapon = null;
+        private GameObject _currentWeaponGO = null;
+        private void Start()
+        {
+            if (_currentWeapon == null)
+            {
+                EquipWeapon(_defaultWeapon);
+            }
+        }
+        
         private void Update()
         {
             _timeSinceLastAttack += Time.deltaTime;
@@ -50,7 +62,7 @@ namespace RPG.Combat
 
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, _target.transform.position) < _attackRange;
+            return Vector3.Distance(transform.position, _target.transform.position) < _currentWeapon.GetAttackRange;
         }
         
         public void Attack(GameObject target)
@@ -73,12 +85,39 @@ namespace RPG.Combat
             GetComponent<Animator>().SetTrigger("stopAttack");
         }
 
+        public void EquipWeapon(Weapon weapon)
+        {
+            if (_currentWeapon != null)
+            {
+                if(_currentWeaponGO != null)
+                {
+                    Destroy(_currentWeaponGO);
+                }
+            }
+            
+            _currentWeapon = weapon;
+            Animator animator = GetComponent<Animator>();
+            _currentWeaponGO = weapon.Spawn(weapon.GetCurrentHandType == Weapon.HandsType.LeftHand ? _leftHandTransform : _rightHandTransform, animator);
+        }
+
+        void Shoot()
+        {
+            Hit();
+        }
+        
         //Animation Trigger
         void Hit()
         {
             if (_target != null)
             {
-                _target.TakeDamage(5);
+                if (_currentWeapon.HasProjectile())
+                {
+                    _currentWeapon.LaunchProjectile(_currentWeapon.GetCurrentHandType == Weapon.HandsType.LeftHand ? _leftHandTransform : _rightHandTransform, _target);
+                }
+                else
+                {
+                    _target.TakeDamage(_currentWeapon.GetWeaponDamage);
+                }
             }
         }
 
@@ -89,6 +128,18 @@ namespace RPG.Combat
             
             Health targetHealth = combatTarget.GetComponent<Health>();
             return targetHealth != null && !targetHealth.IsDead();
+        }
+
+        public object CaptureState()
+        {
+            return _currentWeapon.name;
+        }
+
+        public void RestoreState(object state)
+        {
+            string weaponName = (string)state;
+            Weapon weapon = Resources.Load<Weapon>(weaponName);
+            EquipWeapon(weapon);
         }
     }
 }
