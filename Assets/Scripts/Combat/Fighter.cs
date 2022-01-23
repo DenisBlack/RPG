@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using GameDevTV.Utils;
 using RPG.Core;
 using RPG.Movement;
+using RPG.Resources;
 using RPG.Saving;
+using RPG.Stats;
 using UnityEngine;
 
 namespace RPG.Combat
 {
-    public class Fighter : MonoBehaviour, IAction, ISaveable
+    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
     {
         [SerializeField] private float _timeBetweenAttacks = 1f;
         [SerializeField] private Transform _rightHandTransform = null;
@@ -15,14 +19,23 @@ namespace RPG.Combat
       
         private Health _target;
         private float _timeSinceLastAttack = Mathf.Infinity;
-        private Weapon _currentWeapon = null;
+        private LazyValue<Weapon> _currentWeapon = null;
         private GameObject _currentWeaponGO = null;
+
+        private void Awake()
+        {
+            _currentWeapon = new LazyValue<Weapon>(SetupDefaoultWeapon);
+        }
+
+        private Weapon SetupDefaoultWeapon()
+        {
+            AttachWeapon(_defaultWeapon);
+            return _defaultWeapon;
+        }
+
         private void Start()
         {
-            if (_currentWeapon == null)
-            {
-                EquipWeapon(_defaultWeapon);
-            }
+            _currentWeapon.ForceInit();
         }
         
         private void Update()
@@ -62,7 +75,7 @@ namespace RPG.Combat
 
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, _target.transform.position) < _currentWeapon.GetAttackRange;
+            return Vector3.Distance(transform.position, _target.transform.position) < _currentWeapon.value.GetAttackRange;
         }
         
         public void Attack(GameObject target)
@@ -84,10 +97,26 @@ namespace RPG.Combat
             GetComponent<Animator>().ResetTrigger("attack");
             GetComponent<Animator>().SetTrigger("stopAttack");
         }
+        
+        public IEnumerable<float> GetAdditiveModifier(Stat stat)
+        {
+            if (stat == Stat.Damage)
+            {
+                yield return _currentWeapon.value.GetWeaponDamage;
+            }
+        }
+
+        public IEnumerable<float> GetPercentageModifier(Stat stat)
+        {
+            if (stat == Stat.Damage)
+            {
+                yield return _currentWeapon.value.GetPercentageBonus;
+            }
+        }
 
         public void EquipWeapon(Weapon weapon)
         {
-            if (_currentWeapon != null)
+            if (_currentWeapon.value != null)
             {
                 if(_currentWeaponGO != null)
                 {
@@ -95,11 +124,23 @@ namespace RPG.Combat
                 }
             }
             
-            _currentWeapon = weapon;
-            Animator animator = GetComponent<Animator>();
-            _currentWeaponGO = weapon.Spawn(weapon.GetCurrentHandType == Weapon.HandsType.LeftHand ? _leftHandTransform : _rightHandTransform, animator);
+            _currentWeapon.value = weapon;
+            AttachWeapon(weapon);
         }
 
+        private void AttachWeapon(Weapon weapon)
+        {
+            Animator animator = GetComponent<Animator>();
+            _currentWeaponGO =
+                weapon.Spawn(weapon.GetCurrentHandType == Weapon.HandsType.LeftHand ? _leftHandTransform : _rightHandTransform,
+                    animator);
+        }
+
+        public Health GetTarget()
+        {
+            return _target;
+        }
+        
         void Shoot()
         {
             Hit();
@@ -110,13 +151,15 @@ namespace RPG.Combat
         {
             if (_target != null)
             {
-                if (_currentWeapon.HasProjectile())
+                float damage = GetComponent<BaseStats>().GetStat(Stat.Damage);
+                
+                if (_currentWeapon.value.HasProjectile())
                 {
-                    _currentWeapon.LaunchProjectile(_currentWeapon.GetCurrentHandType == Weapon.HandsType.LeftHand ? _leftHandTransform : _rightHandTransform, _target);
+                    _currentWeapon.value.LaunchProjectile(_currentWeapon.value.GetCurrentHandType == Weapon.HandsType.LeftHand ? _leftHandTransform : _rightHandTransform, _target, gameObject,damage);
                 }
                 else
                 {
-                    _target.TakeDamage(_currentWeapon.GetWeaponDamage);
+                    _target.TakeDamage(gameObject, damage);
                 }
             }
         }
@@ -132,13 +175,13 @@ namespace RPG.Combat
 
         public object CaptureState()
         {
-            return _currentWeapon.name;
+            return _currentWeapon.value.name;
         }
 
         public void RestoreState(object state)
         {
             string weaponName = (string)state;
-            Weapon weapon = Resources.Load<Weapon>(weaponName);
+            Weapon weapon = UnityEngine.Resources.Load<Weapon>(weaponName);
             EquipWeapon(weapon);
         }
     }

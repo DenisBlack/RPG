@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RPG.Core;
+using RPG.Resources;
 using RPG.Saving;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,13 +15,14 @@ namespace RPG.Movement
         private NavMeshAgent _agent;
         private Animator _animator;
         private Health _health;
-        void Start()
+
+        private void Awake()
         {
             _animator = GetComponent<Animator>();
             _agent = GetComponent<NavMeshAgent>();
             _health = GetComponent<Health>();
         }
-
+        
         void Update()
         {
             _agent.enabled = !_health.IsDead();
@@ -72,10 +74,10 @@ namespace RPG.Movement
         public void RestoreState(object state)
         {
             MoverSaveData data = (MoverSaveData)state;
-            GetComponent<NavMeshAgent>().enabled = false;
+            _agent.enabled = false;
             transform.position = data.position.ToVector();
             transform.eulerAngles = data.rotation.ToVector();
-            GetComponent<NavMeshAgent>().enabled = true;
+            _agent.enabled = true;
         }
     }
 }

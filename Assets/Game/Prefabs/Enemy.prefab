@@ -60,6 +60,21 @@ MonoBehaviour:
   _waypointTolerance: 1
   _waypointDwellTime: 3
   _patrolSpeedFraction: 0.2
+--- !u!114 &8944974064322370879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2774932019510879553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70feb25f44071604089223ac7fec6cf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _startingLevel: 1
+  _characterClass: 1
+  _progression: {fileID: 11400000, guid: d41b061527c49284989af0da74479ba8, type: 2}
 --- !u!1001 &1153387007689972148
 PrefabInstance:
   m_ObjectHideFlags: 0

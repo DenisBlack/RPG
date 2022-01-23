@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using RPG.Core;
+using RPG.Resources;
 using UnityEngine;
 
 namespace RPG.Combat
@@ -11,6 +12,7 @@ namespace RPG.Combat
         [SerializeField] private AnimatorOverrideController _animatorOverrideController;
         [SerializeField] private GameObject _weaponPrefab = null;
         [SerializeField] private float _weaponDamage = 5f;
+        [SerializeField] private float _percentageBonusDamage = 0f;
         [SerializeField] private float _attackRange = 2f;
         [SerializeField] private Projectile _projectile = null;
         public enum HandsType
@@ -23,6 +25,8 @@ namespace RPG.Combat
         
         public float GetAttackRange => _attackRange;
         public float GetWeaponDamage => _weaponDamage;
+
+        public float GetPercentageBonus => _percentageBonusDamage;
         public GameObject Spawn(Transform handTransform, Animator animator)
         {
             GameObject weaponGO = null;
@@ -44,10 +48,10 @@ namespace RPG.Combat
             return weaponGO;
         }
 
-        public void LaunchProjectile(Transform handTransform, Health health)
+        public void LaunchProjectile(Transform handTransform, Health health, GameObject instigator, float calculateDamage)
         {
             Projectile projectile = Instantiate(_projectile, handTransform.position, Quaternion.identity);
-            projectile.SetTarget(health, _weaponDamage);
+            projectile.SetTarget(health, instigator, calculateDamage);
         }
 
         public bool HasProjectile()

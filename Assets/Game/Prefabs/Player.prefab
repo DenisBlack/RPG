@@ -30,6 +30,36 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.97, z: 0}
+--- !u!114 &901007087723144917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2533021329777796987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70feb25f44071604089223ac7fec6cf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _startingLevel: 1
+  _characterClass: 0
+  _progression: {fileID: 11400000, guid: d41b061527c49284989af0da74479ba8, type: 2}
+  _levelUpEffect: {fileID: 2282081340963222368, guid: 7817bf4c30a499541a314072510561a3, type: 3}
+  _shouldUseModifiers: 1
+--- !u!114 &6096573308194441507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2533021329777796987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 768aad07d17b411b98dc3cc9da189070, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _experiencePoints: 0
 --- !u!114 &8890787535039755409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,6 +197,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1531870002809923283, guid: 27d0264e081d87b409cb8c9bc1f8dbbc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2524960548786703942, guid: 27d0264e081d87b409cb8c9bc1f8dbbc, type: 3}
+      propertyPath: _levelUpEffect
+      value: 
+      objectReference: {fileID: 2282081340963222368, guid: 7817bf4c30a499541a314072510561a3, type: 3}
+    - target: {fileID: 2524960548786703942, guid: 27d0264e081d87b409cb8c9bc1f8dbbc, type: 3}
+      propertyPath: _characterClass
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2649956996143856464, guid: 27d0264e081d87b409cb8c9bc1f8dbbc, type: 3}

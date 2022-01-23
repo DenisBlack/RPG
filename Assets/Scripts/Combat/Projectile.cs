@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using RPG.Core;
+using RPG.Resources;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -13,6 +14,7 @@ public class Projectile : MonoBehaviour
     private Health _target;
     private float _damage = 0;
 
+    private GameObject _instigator = null;
     private void Start()
     {
         transform.LookAt(GetAimLocation());
@@ -30,11 +32,11 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    public void SetTarget(Health target, float damage)
+    public void SetTarget(Health target, GameObject instigator, float damage)
     {
         _target = target;
         _damage = damage;
-        
+        _instigator = instigator;
         Destroy(gameObject, _maxLifeTimer);
     }
     
@@ -53,7 +55,7 @@ public class Projectile : MonoBehaviour
     {
         if(other.GetComponent<Health>() != _target) return;
         if(_target.IsDead()) return;
-        _target.TakeDamage(_damage);
+        _target.TakeDamage(_instigator,_damage);
 
         if(_hitEffect)
         {
